@@ -21,6 +21,7 @@ require File.expand_path('../../../assets/rabbit-labrat/lib/lab_rat/aggregate_he
 
 RSpec.describe 'Using a Cloud Foundry service broker' do
   let(:service_name) { 'p-rabbitmq' }
+  let(:service_offering) { 'standard' }
 
   let(:service) do
     Prof::MarketplaceService.new(
@@ -75,12 +76,25 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 
   context 'default deployment'  do
-    it 'provides default connectivity', :pushes_cf_app do
-      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-        provides_amqp_connectivity(app)
-        provides_mqtt_connectivity(app)
-        provides_stomp_connectivity(app)
-      end
+    fit 'provides default connectivity', :pushes_cf_app do
+      app_name = 'test_app'
+      service_instance_name = 'test_service_name'
+
+      cf2.push_app(test_app_path, app_name)
+      cf2.create_service_instance(service_name, service_offering, service_instance_name)
+      cf2.bind_app_to_service(app_name, service_instance_name)
+
+      cf2.start_app(app_name)
+
+      provides_amqp_connectivity(app)
+      provides_mqtt_connectivity(app)
+      provides_stomp_connectivity(app)
+
+      # cf2.push_app_and_bind_with_service(test_app, service) do |app, _|
+      #   provides_amqp_connectivity(app)
+      #   provides_mqtt_connectivity(app)
+      #   provides_stomp_connectivity(app)
+      # end
     end
 
     it 'fails to connect if bindings are deleted', :pushes_cf_app do

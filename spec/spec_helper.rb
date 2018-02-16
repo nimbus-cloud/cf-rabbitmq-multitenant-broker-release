@@ -100,6 +100,61 @@ def bosh
   @bosh ||= Bosh2.new(BOSH_CLI)
 end
 
+class CF
+    attr_reader :domain, :api_url
+
+  def initialize(api_url, domain, username, password)
+    @cf_cli = 'cf'
+    @domain = domain
+
+    raise 'CF CLI is required' unless version.start_with?('version')
+
+    target(api_url)
+    login(username, password)
+  end
+
+  def cf(command)
+    `#{@cf_cli} #{command}`
+  end
+
+  def target(api_url)
+    cf("api #{api_url} --skip-ssl-validation")
+  end
+
+  def login(username, password)
+    cf("auth #{username} #{password}")
+  end
+
+  def version
+    cf("--version")
+  end
+
+  def create_service_instance(service, plan, service_instance_name)
+    cf("create-service #{service} #{plan} #{service_instance_name}")
+  end
+
+  def bind_app_to_service(app_name, service_instance_name)
+    cf("bind-service #{app_name} #{service_instance_name}")
+  end
+
+  def push_app(app_path, name)
+    cf("push #{name} -p #{app_path} -n #{name} -d #{domain} ---no-start")
+  end
+
+  def start_app(name)
+    cf("start #{name}")
+  end
+
+  def url_for_app(app_name)
+    "https://#{app_name}.#{domain}"
+  end
+
+end
+
+def cf2
+  @cf ||= CF.new(CF_CLI)
+end
+
 def test_manifest
   YAML.load_file(ENV.fetch('BOSH_MANIFEST'))
 end
@@ -115,6 +170,10 @@ end
 
 def test_app
   @test_app ||= Prof::TestApp.new(path: File.expand_path('../../assets/rabbit-labrat', __FILE__))
+end
+
+def test_app_path
+  File.expand_path('../../assets/rabbit-labrat', __FILE__)
 end
 
 module ExcludeHelper
