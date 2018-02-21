@@ -12,15 +12,16 @@ require 'prof/cloud_foundry'
 require 'prof/test_app'
 require 'rabbitmq/http/client'
 
-require "mqtt"
-require "stomp"
+require 'mqtt'
+require 'stomp'
 require 'net/https'
 require 'httparty'
 
 require File.expand_path('../../../assets/rabbit-labrat/lib/lab_rat/aggregate_health_checker.rb', __FILE__)
 
 RSpec.describe 'Using a Cloud Foundry service broker' do
-  let(:service_name) { 'p-rabbitmq' }
+  let(:service_name) { 'p-rabbitmq-aleal' }
+  let(:service_offering) { 'standard' }
 
   let(:service) do
     Prof::MarketplaceService.new(
@@ -30,37 +31,37 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   end
 
   let(:rmq_server_admin_broker_username) do
-    rabbitmq_server_instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'rmq' }.first
-    rabbitmq_server_job =  rabbitmq_server_instance_group['jobs'].select{ |job| job['name'] == 'rabbitmq-server'}.first
+    rabbitmq_server_instance_group = manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'rmq' }.first
+    rabbitmq_server_job = rabbitmq_server_instance_group['jobs'].select { |job| job['name'] == 'rabbitmq-server' }.first
     rabbitmq_server_job['properties']['administrators']['broker']['username']
   end
 
   let(:rmq_server_admin_broker_password) do
-    rabbitmq_server_instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'rmq' }.first
-    rabbitmq_server_job =  rabbitmq_server_instance_group['jobs'].select{ |job| job['name'] == 'rabbitmq-server'}.first
+    rabbitmq_server_instance_group = manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'rmq' }.first
+    rabbitmq_server_job = rabbitmq_server_instance_group['jobs'].select { |job| job['name'] == 'rabbitmq-server' }.first
     rabbitmq_server_job['properties']['administrators']['broker']['password']
   end
 
   let(:rmq_broker_username) do
-    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'broker-registrar' }.first
-    rabbitmq_broker_registrar_job =  rabbitmq_broker_registrar_instance_group['jobs'].select{ |job| job['name'] == 'broker-registrar'}.first
+    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'broker-registrar' }.first
+    rabbitmq_broker_registrar_job = rabbitmq_broker_registrar_instance_group['jobs'].select { |job| job['name'] == 'broker-registrar' }.first
     rabbitmq_broker_registrar_properties = rabbitmq_broker_registrar_job['properties']['broker']
-    rabbitmq_broker_registrar_properties[ 'username' ]
+    rabbitmq_broker_registrar_properties['username']
   end
 
   let(:rmq_broker_password) do
-    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'broker-registrar' }.first
-    rabbitmq_broker_registrar_job =  rabbitmq_broker_registrar_instance_group['jobs'].select{ |job| job['name'] == 'broker-registrar'}.first
+    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'broker-registrar' }.first
+    rabbitmq_broker_registrar_job = rabbitmq_broker_registrar_instance_group['jobs'].select { |job| job['name'] == 'broker-registrar' }.first
     rabbitmq_broker_registrar_properties = rabbitmq_broker_registrar_job['properties']['broker']
-    rabbitmq_broker_registrar_properties[ 'password' ]
+    rabbitmq_broker_registrar_properties['password']
   end
 
   let(:rmq_broker_host) do
-    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'broker-registrar' }.first
-    rabbitmq_broker_registrar_job =  rabbitmq_broker_registrar_instance_group['jobs'].select{ |job| job['name'] == 'broker-registrar'}.first
+    rabbitmq_broker_registrar_instance_group = test_manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'broker-registrar' }.first
+    rabbitmq_broker_registrar_job = rabbitmq_broker_registrar_instance_group['jobs'].select { |job| job['name'] == 'broker-registrar' }.first
     rabbitmq_broker_registrar_properties = rabbitmq_broker_registrar_job['properties']['broker']
-    protocol = rabbitmq_broker_registrar_properties[ 'protocol' ]
-    host = rabbitmq_broker_registrar_properties[ 'host' ]
+    protocol = rabbitmq_broker_registrar_properties['protocol']
+    host = rabbitmq_broker_registrar_properties['host']
     URI.parse("#{protocol}://#{host}")
   end
 
@@ -68,19 +69,32 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
     catalog_uri = URI.join(rmq_broker_host, '/v2/catalog')
     req = Net::HTTP::Get.new(catalog_uri)
     req.basic_auth(rmq_broker_username, rmq_broker_password)
-    response = Net::HTTP.start(rmq_broker_host.hostname, rmq_broker_host.port, :use_ssl => rmq_broker_host.scheme == 'https', :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+    response = Net::HTTP.start(rmq_broker_host.hostname, rmq_broker_host.port, use_ssl: rmq_broker_host.scheme == 'https', verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       http.request(req)
     end
     JSON.parse(response.body)
   end
 
-  context 'default deployment'  do
-    it 'provides default connectivity', :pushes_cf_app do
-      cf.push_app_and_bind_with_service(test_app, service) do |app, _|
-        provides_amqp_connectivity(app)
-        provides_mqtt_connectivity(app)
-        provides_stomp_connectivity(app)
-      end
+  context 'default deployment' do
+    fit 'provides default connectivity', :pushes_cf_app do
+      app_name = 'testapp'
+      service_instance_name = 'testservicename'
+
+      app = cf2.push_app(test_app_path, app_name)
+      cf2.create_service_instance(service_name, service_offering, service_instance_name)
+      cf2.bind_app_to_service(app_name, service_instance_name)
+
+      cf2.restage_app(app_name)
+
+      provides_amqp_connectivity(app)
+      provides_mqtt_connectivity(app)
+      provides_stomp_connectivity(app)
+
+      # cf2.push_app_and_bind_with_service(test_app, service) do |app, _|
+      #   provides_amqp_connectivity(app)
+      #   provides_mqtt_connectivity(app)
+      #   provides_stomp_connectivity(app)
+      # end
     end
 
     it 'fails to connect if bindings are deleted', :pushes_cf_app do
@@ -89,19 +103,19 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
         provides_no_amqp_connectivity(app)
         provides_no_mqtt_connectivity(app)
- 
+
         # Check #150334805
         # provides_no_stomp_connectivity(app)
       end
     end
   end
 
-  context 'when stomp plugin is disabled'  do
+  context 'when stomp plugin is disabled' do
     before(:context) do
       bosh.redeploy do |manifest|
-        rabbitmq_server_instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'rmq' }.first
-        rabbitmq_server_job =  rabbitmq_server_instance_group['jobs'].select{ |job| job['name'] == 'rabbitmq-server'}.first
-        service_properties = rabbitmq_server_job['properties']['rabbitmq-server']['plugins'] = ['rabbitmq_management','rabbitmq_mqtt']
+        rabbitmq_server_instance_group = manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'rmq' }.first
+        rabbitmq_server_job = rabbitmq_server_instance_group['jobs'].select { |job| job['name'] == 'rabbitmq-server' }.first
+        service_properties = rabbitmq_server_job['properties']['rabbitmq-server']['plugins'] = %w[rabbitmq_management rabbitmq_mqtt]
       end
     end
 
@@ -121,12 +135,12 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
   context 'when broker is configured with HA policy' do
     before(:context) do
       bosh.redeploy do |manifest|
-        rabbitmq_broker_instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'rmq-broker' }.first
-        rabbitmq_broker_job =  rabbitmq_broker_instance_group['jobs'].select{ |job| job['name'] == 'rabbitmq-broker'}.first
+        rabbitmq_broker_instance_group = manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'rmq-broker' }.first
+        rabbitmq_broker_job = rabbitmq_broker_instance_group['jobs'].select { |job| job['name'] == 'rabbitmq-broker' }.first
         service_properties = rabbitmq_broker_job['properties']['rabbitmq-broker']['rabbitmq']['operator_set_policy'] = {
           'enabled' => true,
-          'policy_name' => "operator_set_policy",
-          'policy_definition' => "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}",
+          'policy_name' => 'operator_set_policy',
+          'policy_definition' => '{"ha-mode":"exactly","ha-params":2,"ha-sync-mode":"automatic"}',
           'policy_priority' => 50
         }
       end
@@ -145,7 +159,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
   context 'when provisioning a service key' do
     it 'provides defaults', :creates_service_key do
-      cf.provision_and_create_service_key(service) do |service_instance, service_key, service_key_data|
+      cf.provision_and_create_service_key(service) do |_service_instance, _service_key, service_key_data|
         check_that_amqp_connection_data_is_present_in(service_key_data)
         check_that_stomp_connection_data_is_present_in(service_key_data)
       end
@@ -173,17 +187,17 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
       before(:all) do
         bosh.redeploy do |manifest|
-          rabbitmq_broker_instance_group = manifest['instance_groups'].select{ |instance_group| instance_group['name'] == 'rmq-broker' }.first
-          rabbitmq_broker_job =  rabbitmq_broker_instance_group['jobs'].select{ |job| job['name'] == 'rabbitmq-broker'}.first
+          rabbitmq_broker_instance_group = manifest['instance_groups'].select { |instance_group| instance_group['name'] == 'rmq-broker' }.first
+          rabbitmq_broker_job = rabbitmq_broker_instance_group['jobs'].select { |job| job['name'] == 'rabbitmq-broker' }.first
           service_properties = rabbitmq_broker_job['properties']['rabbitmq-broker']['service']
-          service_properties['name'] = "service-name"
-          service_properties['display_name'] = "apps-manager-test-name"
-          service_properties['offering_description'] = "Some description of our service"
-          service_properties['long_description'] = "Some long description of our service"
-          service_properties['icon_image'] = "image-uri"
-          service_properties['provider_display_name'] = "CompanyName"
-          service_properties['documentation_url'] = "https://documentation.url"
-          service_properties['support_url'] = "https://support.url"
+          service_properties['name'] = 'service-name'
+          service_properties['display_name'] = 'apps-manager-test-name'
+          service_properties['offering_description'] = 'Some description of our service'
+          service_properties['long_description'] = 'Some long description of our service'
+          service_properties['icon_image'] = 'image-uri'
+          service_properties['provider_display_name'] = 'CompanyName'
+          service_properties['documentation_url'] = 'https://documentation.url'
+          service_properties['support_url'] = 'https://support.url'
         end
       end
 
@@ -193,35 +207,35 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 
       describe 'the catalog' do
         it 'has the correct name' do
-          expect(service_info['name']).to eq("service-name")
+          expect(service_info['name']).to eq('service-name')
         end
 
         it 'has the correct description' do
-          expect(service_info['description']).to eq("Some description of our service")
+          expect(service_info['description']).to eq('Some description of our service')
         end
 
         it 'has the correct display name' do
-          expect(broker_catalog_metadata['displayName']).to eq("apps-manager-test-name")
+          expect(broker_catalog_metadata['displayName']).to eq('apps-manager-test-name')
         end
 
         it 'has the correct long description' do
-          expect(broker_catalog_metadata['longDescription']).to eq("Some long description of our service")
+          expect(broker_catalog_metadata['longDescription']).to eq('Some long description of our service')
         end
 
         it 'has the correct image icon' do
-          expect(broker_catalog_metadata['imageUrl']).to eq("data:image/png;base64,image-uri")
+          expect(broker_catalog_metadata['imageUrl']).to eq('data:image/png;base64,image-uri')
         end
 
         it 'has the correct provider display name' do
-          expect(broker_catalog_metadata['providerDisplayName']).to eq("CompanyName")
+          expect(broker_catalog_metadata['providerDisplayName']).to eq('CompanyName')
         end
 
         it 'has the correct documentation url' do
-          expect(broker_catalog_metadata['documentationUrl']).to eq("https://documentation.url")
+          expect(broker_catalog_metadata['documentationUrl']).to eq('https://documentation.url')
         end
 
         it 'has the correct support url' do
-          expect(broker_catalog_metadata['supportUrl']).to eq("https://support.url")
+          expect(broker_catalog_metadata['supportUrl']).to eq('https://support.url')
         end
       end
     end
@@ -229,7 +243,7 @@ RSpec.describe 'Using a Cloud Foundry service broker' do
 end
 
 def get(url)
-  HTTParty.get(url, {verify: false, timeout: 2})
+  HTTParty.get(url, verify: false, timeout: 2)
 end
 
 def provides_amqp_connectivity(app)
@@ -267,12 +281,11 @@ end
 
 def provides_no_connectivity_for(app, protocol)
   # This is a work-around for #144893311
-  begin
-    response = get("#{app.url}/services/rabbitmq/protocols/#{protocol}")
-    expect(response.code).to eql(500)
-  rescue Net::ReadTimeout => e
-    puts "Caught exception #{e}!"
-  end
+
+  response = get("#{app.url}/services/rabbitmq/protocols/#{protocol}")
+  expect(response.code).to eql(500)
+rescue Net::ReadTimeout => e
+  puts "Caught exception #{e}!"
 end
 
 def check_that_amqp_connection_data_is_present_in(service_key_data)
@@ -280,7 +293,7 @@ def check_that_amqp_connection_data_is_present_in(service_key_data)
 end
 
 def check_that_stomp_connection_data_is_present_in(service_key_data)
-  check_connection_data(service_key_data, 'stomp', 61613)
+  check_connection_data(service_key_data, 'stomp', 61_613)
 end
 
 def check_connection_data(service_key_data, protocol, port)
