@@ -2,10 +2,10 @@
   :description "Pivotal CF RabbitMQ service broker"
   :dependencies [[org.clojure/clojure     "1.6.0"]
                  ;; RabbitMQ client (including HTTP API)
-                 [com.novemberain/langohr "3.7.0" :exclusions [clj-http]]
+                 [com.novemberain/langohr "5.1.0" :exclusions [clj-http]]
                  ;; HTTP client which uses HTTPCore 4.2.x, compatible
                  ;; with Spring 3 and CF Java client.
-                 [clj-http                "1.0.1"]
+                 [clj-http                "3.9.1"]
                  ;; routing, etc for HTTP API
                  [compojure                 "1.2.0"     :exclusions [org.clojure/clojure ring/ring-core]]
                  [ring/ring-core            "1.3.1"]
@@ -21,7 +21,7 @@
                  ;; logging
                  [com.taoensso/timbre       "3.3.1"]
                  ;; YAML/JSON parser
-                 [circleci/clj-yaml         "0.5.3"]
+                 [circleci/clj-yaml         "0.6.0"]
                  [org.clojure/data.json     "0.2.6"]
                  ;; validation
                  [com.novemberain/validateur "2.3.1"]
