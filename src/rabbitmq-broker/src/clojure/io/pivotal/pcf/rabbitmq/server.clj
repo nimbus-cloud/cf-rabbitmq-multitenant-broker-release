@@ -12,6 +12,7 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
             [clojure.string :as string]
+            [clj-http.client :as httpc]
             [langohr.http :as hc])
   (:import java.io.File
            java.lang.management.ManagementFactory))
@@ -51,6 +52,18 @@
                           :display_name "RabbitMQ"
                           :offering_description "RabbitMQ messaging broker"
                           :tags ["rabbitmq" "rabbit" "messaging" "message-queue" "amqp" "mqtt" "stomp"]}]})
+
+(defn go-get
+  ([^String path]
+     (go-get path "http"))
+  ([^String path ^String scheme]
+     (json/decode (:body (httpc/get (format "%s://go-broker:8901%s" scheme path)
+                                    {:headers {"X-Broker-Api-Version" "2.14"}
+                                     :basic-auth ["admin" "password"]}))
+                  true)))
+
+(def go-catalog (go-get "/v2/catalog"))
+
 
 (defn init-catalog!
   [config]
@@ -111,6 +124,10 @@
 (defn show-catalog
   [req]
   (response catalog))
+
+(defn show-go-catalog
+  [req]
+  (response go-catalog))
 
 (defn create-service
   [{:keys [params] :as req}]
@@ -232,6 +249,7 @@
 
 (defroutes broker-v2-routes
   (GET    "/v2/catalog"               req show-catalog)
+  (GET    "/v2/go-catalog"            req show-go-catalog)
   (PUT    "/v2/service_instances/:id" req create-service)
   (DELETE "/v2/service_instances/:id" req delete-service)
   (PUT    "/v2/service_instances/:instance_id/service_bindings/:id" req bind-service)

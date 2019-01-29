@@ -12,5 +12,6 @@ fi
 
 pushd "$RABBITMQ_BROKER_DIR"
   docker run -v "${PWD}:/tmp/rabbitmq-broker" \
-           cflondonservices/london-services-ci-rabbitmq /tmp/rabbitmq-broker/bin/test
+            --rm --name clojure --net test \
+            cflondonservices/london-services-ci-rabbitmq /tmp/rabbitmq-broker/bin/test
 popd

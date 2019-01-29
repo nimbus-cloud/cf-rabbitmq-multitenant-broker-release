@@ -104,6 +104,21 @@
         (is (some #(= "RabbitMQ" %) (get (get plan :metadata) :bullets)))
         ))))
 
+(deftest test-go-catalog-info
+  (testing "with valid credentials"
+    (with-server-running
+      (let [res (th/get "v2/go-catalog")
+            s1  (-> res :services first)
+            plan (first (get s1 :plans))]
+        (are [k v] (is (= v (get s1 k)))
+             :id       "00000000-0000-0000-0000-000000000000"
+             :name     "p-rabbitmq"
+             :bindable true)
+        (is (= "standard"  (get plan :name)))
+        (is (= "Provides a multi-tenant RabbitMQ cluster"  (get plan :description)))
+        (is (some #(= "RabbitMQ" %) (get (get plan :metadata) :bullets)))
+        ))))
+
 (deftest test-metadata-info
   (testing "shareable instances"
     (with-server-running
