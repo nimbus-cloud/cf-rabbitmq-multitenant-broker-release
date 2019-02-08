@@ -2,23 +2,20 @@ package integrationtests_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
-
-	"rabbitmq-service-broker/broker"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/pivotal-cf/brokerapi"
-	yaml "gopkg.in/yaml.v2"
 )
 
 const (
 	url      = "http://localhost:8901/v2/catalog"
-	username = "admin"
-	password = "admin"
+	username = "p1-rabbit"
+	password = "p1-rabbit-testpwd"
 )
 
 var _ = Describe("/v2/catalog", func() {
@@ -31,50 +28,29 @@ var _ = Describe("/v2/catalog", func() {
 	})
 
 	When("credentials are provided and they are correct", func() {
+		It("succeeds with HTTP 200 and returns a valid catalog", func() {
+			response, body := doRequest(http.MethodGet, url, nil)
+			Expect(response.StatusCode).To(Equal(http.StatusOK))
 
-		XWhen("an empty config is provided", func() {
-			It("succeeds with HTTP 200", func() {
-				response, body := doRequest(http.MethodGet, url, nil)
-				Expect(response.StatusCode).To(Equal(http.StatusOK))
+			catalog := make(map[string][]brokerapi.Service)
+			Expect(json.Unmarshal(body, &catalog)).To(Succeed())
 
-				catalog := make(map[string][]brokerapi.Service)
-				Expect(json.Unmarshal(body, &catalog)).To(Succeed())
-
-				Expect(catalog["services"]).To(HaveLen(1))
-				// match against the expectation
-				Expect(catalog["services"][0]).To(Equal(brokerapi.Service{
-					ID:          "service-id",
-					Name:        "service-name",
-					Description: "service-description",
-				}))
-			})
-
-		})
-
-		When("a valid config is provided", func() {
-			It("succeeds with HTTP 200", func() {
-				response, body := doRequest(http.MethodGet, url, nil)
-				Expect(response.StatusCode).To(Equal(http.StatusOK))
-
-				catalog := make(map[string][]brokerapi.Service)
-				Expect(json.Unmarshal(body, &catalog)).To(Succeed())
-
-				// read in the expectation
-				configFilePath := "./fixtures/config.yml"
-				configBytes, err := ioutil.ReadFile(filepath.FromSlash(configFilePath))
-				Expect(err).NotTo(HaveOccurred())
-
-				config := broker.Config{}
-				Expect(yaml.Unmarshal(configBytes, &config)).To(Succeed())
-
-				Expect(catalog["services"]).To(HaveLen(1))
-				// match against the expectation
-				Expect(catalog["services"][0]).To(Equal(brokerapi.Service{
-					ID:          config.ServiceConfig.UUID,
-					Name:        config.ServiceConfig.Name,
-					Description: config.ServiceConfig.OfferingDescription,
-				}))
-			})
+			Expect(catalog["services"]).To(HaveLen(1))
+			// match against the expectation
+			Expect(catalog["services"][0]).To(Equal(brokerapi.Service{
+				ID:          "00000000-0000-0000-0000-000000000000",
+				Name:        "p-rabbitmq",
+				Description: "this is a description",
+				Bindable:    true,
+				Metadata: &brokerapi.ServiceMetadata{
+					DisplayName:         "WhiteRabbitMQ",
+					ImageUrl:            fmt.Sprintf("data:image/png;base64,%s", "image_icon_base64"),
+					LongDescription:     "this is a long description",
+					ProviderDisplayName: "SomeCompany",
+					DocumentationUrl:    "https://example.com",
+					SupportUrl:          "https://support.example.com",
+				},
+			}))
 		})
 	})
 })

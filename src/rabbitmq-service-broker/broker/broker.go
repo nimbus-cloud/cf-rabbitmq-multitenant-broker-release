@@ -7,15 +7,6 @@ import (
 	"github.com/pivotal-cf/brokerapi"
 )
 
-type Config struct {
-	ServiceConfig ServiceConfig
-}
-type ServiceConfig struct {
-	UUID                string `yaml:"uuid"`
-	Name                string `yaml:"name"`
-	OfferingDescription string `yaml:"offering_description"`
-}
-
 type RabbitMQServiceBroker struct {
 	Config Config
 }

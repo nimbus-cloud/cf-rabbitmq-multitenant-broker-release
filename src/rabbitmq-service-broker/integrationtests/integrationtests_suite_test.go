@@ -2,6 +2,7 @@ package integrationtests_test
 
 import (
 	"os/exec"
+	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/ginkgo"
@@ -21,7 +22,10 @@ var _ = BeforeSuite(func() {
 	pathToServiceBroker, err := gexec.Build("rabbitmq-service-broker")
 	Expect(err).NotTo(HaveOccurred())
 
-	command := exec.Command(pathToServiceBroker)
+	path, err := filepath.Abs(filepath.Join("fixtures", "config.yml"))
+	Expect(err).ToNot(HaveOccurred())
+
+	command := exec.Command(pathToServiceBroker, "-configPath", path)
 	session, err = gexec.Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
 
