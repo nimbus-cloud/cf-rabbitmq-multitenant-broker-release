@@ -25,11 +25,10 @@ var _ = BeforeSuite(func() {
 	session, err = gexec.Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
 
-	Eventually(session.Out).Should(gbytes.Say("RabbitMQ Service Broker listening on port 8901"))
+	Eventually(session.Out).Should(gbytes.Say("RabbitMQ Service Broker listening on port"))
 })
 
 var _ = AfterSuite(func() {
-	session.Kill()
-	session.Wait()
+	session.Kill().Wait()
 	gexec.CleanupBuildArtifacts()
 })
