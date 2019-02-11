@@ -45,7 +45,7 @@ var _ = Describe("Config", func() {
 
 		Context("when the config is empty", func() {
 			It("returns an error", func() {
-				tmpfile, err := ioutil.TempFile("", "wrong-config.yml")
+				tmpfile, err := ioutil.TempFile("", "empty-config.yml")
 				Expect(err).NotTo(HaveOccurred())
 				path, err := filepath.Abs(tmpfile.Name())
 				Expect(err).NotTo(HaveOccurred())
