@@ -12,9 +12,12 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.middleware.basic-authentication :refer [wrap-basic-authentication]]
             [clojure.string :as string]
+            [clj-http.client :as httpc]
             [langohr.http :as hc])
+  (:use [slingshot.slingshot :only [throw+ try+]])
   (:import java.io.File
-           java.lang.management.ManagementFactory))
+           java.lang.management.ManagementFactory)
+  )
 
 ;;
 ;; Implementation
@@ -108,9 +111,20 @@
 ;; Routes
 ;;
 
-(defn show-catalog
+;; TODO:
+;; 1. Forward the body
+;; 2. Forward request method (or create different function for GET, PUT, etc)
+(defn forward-request
   [req]
-  (response catalog))
+  (let [headers (get req :headers)
+        endpoint (get req :uri)
+        body (get req :body)
+        method (get req :request-method)]
+    (try+
+      (httpc/get (format "http://localhost:8901%s" endpoint) {:headers headers})
+    (catch Object e
+      e
+    ))))
 
 (defn create-service
   [{:keys [params] :as req}]
@@ -231,7 +245,7 @@
   (ok "2.0"))
 
 (defroutes broker-v2-routes
-  (GET    "/v2/catalog"               req show-catalog)
+  (GET    "/v2/catalog"               req forward-request)
   (PUT    "/v2/service_instances/:id" req create-service)
   (DELETE "/v2/service_instances/:id" req delete-service)
   (PUT    "/v2/service_instances/:instance_id/service_bindings/:id" req bind-service)
