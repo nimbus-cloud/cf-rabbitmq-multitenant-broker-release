@@ -121,8 +121,9 @@
         body (get req :body)
         method (get req :request-method)]
     (try+
-      (httpc/get (format "http://localhost:8901%s" endpoint) {:headers headers})
+      (httpc/get (format "http://localhost:8901%s" endpoint) {:headers (assoc headers :X-Broker-API-Version "2.14")})
     (catch Object e
+      (log/infof "forward-request failed for: %s, %s" endpoint headers)
       e
     ))))
 

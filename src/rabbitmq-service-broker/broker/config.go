@@ -26,6 +26,7 @@ type ServiceConfig struct {
 	ProviderDisplayName string `yaml:"provider_display_name"`
 	DocumentationUrl    string `yaml:"documentation_url"`
 	SupportUrl          string `yaml:"support_url"`
+	Shareable           bool   `yaml:"shareable"`
 }
 
 type RabbitmqConfig struct {
