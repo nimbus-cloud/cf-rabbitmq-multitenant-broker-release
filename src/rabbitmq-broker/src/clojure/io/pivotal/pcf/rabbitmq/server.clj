@@ -49,18 +49,6 @@
     (reset! (beckon/signal-atom "INT")  xs)
     (reset! (beckon/signal-atom "TERM") xs)))
 
-(def catalog {:services [{:name "p-rabbitmq"
-                          :provider "pivotal"
-                          :display_name "RabbitMQ"
-                          :offering_description "RabbitMQ messaging broker"
-                          :tags ["rabbitmq" "rabbit" "messaging" "message-queue" "amqp" "mqtt" "stomp"]}]})
-
-(defn init-catalog!
-  [config]
-  (let [svs (cfg/service-info config)]
-    (alter-var-root #'catalog (constantly {:services [svs]}))
-    config))
-
 (defn init-rabbitmq-connection!
   [config]
   (let [uri    (get (cfg/rabbitmq-administrator-uris config) 0)
@@ -272,8 +260,6 @@
   (initialize-logger config)
   (announce-start config)
   (install-signal-traps)
-  (init-catalog! config)
-  (log/infof "Initialized service catalog")
   (cfg/init! config)
   (log/infof "Finalized own configuration")
   (log-if-using-tls config)
