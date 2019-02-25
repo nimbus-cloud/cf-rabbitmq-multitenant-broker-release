@@ -9,6 +9,7 @@ import (
 	"github.com/pivotal-cf/brokerapi"
 
 	"rabbitmq-service-broker/broker"
+	"rabbitmq-service-broker/broker/fakes"
 )
 
 var _ = Describe("Service Broker", func() {
@@ -28,8 +29,8 @@ var _ = Describe("Service Broker", func() {
 				Shareable:           false,
 			},
 		}
-
-		broker := broker.New(cfg)
+		client := new(fakes.FakeAPIClient)
+		broker := broker.New(cfg, client)
 		services, err := broker.Services(context.Background())
 		Expect(err).NotTo(HaveOccurred())
 

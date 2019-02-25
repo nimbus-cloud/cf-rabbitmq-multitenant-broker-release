@@ -3,22 +3,29 @@ package broker
 import (
 	"context"
 	"errors"
+	"net/http"
 
+	"github.com/michaelklishin/rabbit-hole"
 	"github.com/pivotal-cf/brokerapi"
 )
 
+//go:generate counterfeiter -o ./fakes/api_client_fake.go $FILE APIClient
+
+type APIClient interface {
+	GetVhost(string) (*rabbithole.VhostInfo, error)
+	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
+}
+
 type RabbitMQServiceBroker struct {
 	Config Config
+	client APIClient
 }
 
-func New(cfg Config) brokerapi.ServiceBroker {
+func New(cfg Config, client APIClient) brokerapi.ServiceBroker {
 	return RabbitMQServiceBroker{
 		Config: cfg,
+		client: client,
 	}
-}
-
-func (rabbitmqServiceBroker RabbitMQServiceBroker) Provision(ctx context.Context, instanceID string, details brokerapi.ProvisionDetails, asyncAllowed bool) (brokerapi.ProvisionedServiceSpec, error) {
-	return brokerapi.ProvisionedServiceSpec{}, errors.New("Not implemented")
 }
 
 func (rabbitmqServiceBroker RabbitMQServiceBroker) Deprovision(ctx context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {

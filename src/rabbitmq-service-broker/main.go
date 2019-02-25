@@ -9,6 +9,7 @@ import (
 	"rabbitmq-service-broker/broker"
 
 	"code.cloudfoundry.org/lager"
+	"github.com/michaelklishin/rabbit-hole"
 	"github.com/pivotal-cf/brokerapi"
 )
 
@@ -29,8 +30,12 @@ func main() {
 	if err != nil {
 		logger.Fatal("read-config", err)
 	}
+	client, _ := rabbithole.NewClient(
+		fmt.Sprintf("http://%s:15672", config.RabbitmqConfig.Hosts[0]),
+		config.RabbitmqConfig.Administrator.Username,
+		config.RabbitmqConfig.Administrator.Password)
 
-	broker := broker.New(config)
+	broker := broker.New(config, client)
 	credentials := brokerapi.BrokerCredentials{
 		Username: config.ServiceConfig.Username,
 		Password: config.ServiceConfig.Password,
