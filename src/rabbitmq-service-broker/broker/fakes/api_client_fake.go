@@ -23,6 +23,21 @@ type FakeAPIClient struct {
 		result1 *rabbithole.VhostInfo
 		result2 error
 	}
+	PutPolicyStub        func(string, string, rabbithole.Policy) (*http.Response, error)
+	putPolicyMutex       sync.RWMutex
+	putPolicyArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 rabbithole.Policy
+	}
+	putPolicyReturns struct {
+		result1 *http.Response
+		result2 error
+	}
+	putPolicyReturnsOnCall map[int]struct {
+		result1 *http.Response
+		result2 error
+	}
 	PutVhostStub        func(string, rabbithole.VhostSettings) (*http.Response, error)
 	putVhostMutex       sync.RWMutex
 	putVhostArgsForCall []struct {
@@ -34,6 +49,21 @@ type FakeAPIClient struct {
 		result2 error
 	}
 	putVhostReturnsOnCall map[int]struct {
+		result1 *http.Response
+		result2 error
+	}
+	UpdatePermissionsInStub        func(string, string, rabbithole.Permissions) (*http.Response, error)
+	updatePermissionsInMutex       sync.RWMutex
+	updatePermissionsInArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 rabbithole.Permissions
+	}
+	updatePermissionsInReturns struct {
+		result1 *http.Response
+		result2 error
+	}
+	updatePermissionsInReturnsOnCall map[int]struct {
 		result1 *http.Response
 		result2 error
 	}
@@ -104,6 +134,71 @@ func (fake *FakeAPIClient) GetVhostReturnsOnCall(i int, result1 *rabbithole.Vhos
 	}{result1, result2}
 }
 
+func (fake *FakeAPIClient) PutPolicy(arg1 string, arg2 string, arg3 rabbithole.Policy) (*http.Response, error) {
+	fake.putPolicyMutex.Lock()
+	ret, specificReturn := fake.putPolicyReturnsOnCall[len(fake.putPolicyArgsForCall)]
+	fake.putPolicyArgsForCall = append(fake.putPolicyArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 rabbithole.Policy
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("PutPolicy", []interface{}{arg1, arg2, arg3})
+	fake.putPolicyMutex.Unlock()
+	if fake.PutPolicyStub != nil {
+		return fake.PutPolicyStub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.putPolicyReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeAPIClient) PutPolicyCallCount() int {
+	fake.putPolicyMutex.RLock()
+	defer fake.putPolicyMutex.RUnlock()
+	return len(fake.putPolicyArgsForCall)
+}
+
+func (fake *FakeAPIClient) PutPolicyCalls(stub func(string, string, rabbithole.Policy) (*http.Response, error)) {
+	fake.putPolicyMutex.Lock()
+	defer fake.putPolicyMutex.Unlock()
+	fake.PutPolicyStub = stub
+}
+
+func (fake *FakeAPIClient) PutPolicyArgsForCall(i int) (string, string, rabbithole.Policy) {
+	fake.putPolicyMutex.RLock()
+	defer fake.putPolicyMutex.RUnlock()
+	argsForCall := fake.putPolicyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeAPIClient) PutPolicyReturns(result1 *http.Response, result2 error) {
+	fake.putPolicyMutex.Lock()
+	defer fake.putPolicyMutex.Unlock()
+	fake.PutPolicyStub = nil
+	fake.putPolicyReturns = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeAPIClient) PutPolicyReturnsOnCall(i int, result1 *http.Response, result2 error) {
+	fake.putPolicyMutex.Lock()
+	defer fake.putPolicyMutex.Unlock()
+	fake.PutPolicyStub = nil
+	if fake.putPolicyReturnsOnCall == nil {
+		fake.putPolicyReturnsOnCall = make(map[int]struct {
+			result1 *http.Response
+			result2 error
+		})
+	}
+	fake.putPolicyReturnsOnCall[i] = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeAPIClient) PutVhost(arg1 string, arg2 rabbithole.VhostSettings) (*http.Response, error) {
 	fake.putVhostMutex.Lock()
 	ret, specificReturn := fake.putVhostReturnsOnCall[len(fake.putVhostArgsForCall)]
@@ -168,13 +263,82 @@ func (fake *FakeAPIClient) PutVhostReturnsOnCall(i int, result1 *http.Response, 
 	}{result1, result2}
 }
 
+func (fake *FakeAPIClient) UpdatePermissionsIn(arg1 string, arg2 string, arg3 rabbithole.Permissions) (*http.Response, error) {
+	fake.updatePermissionsInMutex.Lock()
+	ret, specificReturn := fake.updatePermissionsInReturnsOnCall[len(fake.updatePermissionsInArgsForCall)]
+	fake.updatePermissionsInArgsForCall = append(fake.updatePermissionsInArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 rabbithole.Permissions
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("UpdatePermissionsIn", []interface{}{arg1, arg2, arg3})
+	fake.updatePermissionsInMutex.Unlock()
+	if fake.UpdatePermissionsInStub != nil {
+		return fake.UpdatePermissionsInStub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.updatePermissionsInReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeAPIClient) UpdatePermissionsInCallCount() int {
+	fake.updatePermissionsInMutex.RLock()
+	defer fake.updatePermissionsInMutex.RUnlock()
+	return len(fake.updatePermissionsInArgsForCall)
+}
+
+func (fake *FakeAPIClient) UpdatePermissionsInCalls(stub func(string, string, rabbithole.Permissions) (*http.Response, error)) {
+	fake.updatePermissionsInMutex.Lock()
+	defer fake.updatePermissionsInMutex.Unlock()
+	fake.UpdatePermissionsInStub = stub
+}
+
+func (fake *FakeAPIClient) UpdatePermissionsInArgsForCall(i int) (string, string, rabbithole.Permissions) {
+	fake.updatePermissionsInMutex.RLock()
+	defer fake.updatePermissionsInMutex.RUnlock()
+	argsForCall := fake.updatePermissionsInArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeAPIClient) UpdatePermissionsInReturns(result1 *http.Response, result2 error) {
+	fake.updatePermissionsInMutex.Lock()
+	defer fake.updatePermissionsInMutex.Unlock()
+	fake.UpdatePermissionsInStub = nil
+	fake.updatePermissionsInReturns = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeAPIClient) UpdatePermissionsInReturnsOnCall(i int, result1 *http.Response, result2 error) {
+	fake.updatePermissionsInMutex.Lock()
+	defer fake.updatePermissionsInMutex.Unlock()
+	fake.UpdatePermissionsInStub = nil
+	if fake.updatePermissionsInReturnsOnCall == nil {
+		fake.updatePermissionsInReturnsOnCall = make(map[int]struct {
+			result1 *http.Response
+			result2 error
+		})
+	}
+	fake.updatePermissionsInReturnsOnCall[i] = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeAPIClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.getVhostMutex.RLock()
 	defer fake.getVhostMutex.RUnlock()
+	fake.putPolicyMutex.RLock()
+	defer fake.putPolicyMutex.RUnlock()
 	fake.putVhostMutex.RLock()
 	defer fake.putVhostMutex.RUnlock()
+	fake.updatePermissionsInMutex.RLock()
+	defer fake.updatePermissionsInMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
