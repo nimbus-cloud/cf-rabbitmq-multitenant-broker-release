@@ -36,10 +36,6 @@ func New(cfg config.Config, client APIClient, logger lager.Logger) brokerapi.Ser
 	}
 }
 
-func (b RabbitMQServiceBroker) Deprovision(ctx context.Context, instanceID string, details brokerapi.DeprovisionDetails, asyncAllowed bool) (brokerapi.DeprovisionServiceSpec, error) {
-	return brokerapi.DeprovisionServiceSpec{}, errors.New("Not implemented")
-}
-
 func (b RabbitMQServiceBroker) GetInstance(ctx context.Context, instanceID string) (brokerapi.GetInstanceDetailsSpec, error) {
 	return brokerapi.GetInstanceDetailsSpec{}, errors.New("Not implemented")
 }
