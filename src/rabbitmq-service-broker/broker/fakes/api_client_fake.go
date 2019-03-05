@@ -51,6 +51,20 @@ type FakeAPIClient struct {
 		result1 *http.Response
 		result2 error
 	}
+	PutUserStub        func(string, rabbithole.UserSettings) (*http.Response, error)
+	putUserMutex       sync.RWMutex
+	putUserArgsForCall []struct {
+		arg1 string
+		arg2 rabbithole.UserSettings
+	}
+	putUserReturns struct {
+		result1 *http.Response
+		result2 error
+	}
+	putUserReturnsOnCall map[int]struct {
+		result1 *http.Response
+		result2 error
+	}
 	PutVhostStub        func(string, rabbithole.VhostSettings) (*http.Response, error)
 	putVhostMutex       sync.RWMutex
 	putVhostArgsForCall []struct {
@@ -275,6 +289,70 @@ func (fake *FakeAPIClient) PutPolicyReturnsOnCall(i int, result1 *http.Response,
 	}{result1, result2}
 }
 
+func (fake *FakeAPIClient) PutUser(arg1 string, arg2 rabbithole.UserSettings) (*http.Response, error) {
+	fake.putUserMutex.Lock()
+	ret, specificReturn := fake.putUserReturnsOnCall[len(fake.putUserArgsForCall)]
+	fake.putUserArgsForCall = append(fake.putUserArgsForCall, struct {
+		arg1 string
+		arg2 rabbithole.UserSettings
+	}{arg1, arg2})
+	fake.recordInvocation("PutUser", []interface{}{arg1, arg2})
+	fake.putUserMutex.Unlock()
+	if fake.PutUserStub != nil {
+		return fake.PutUserStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.putUserReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeAPIClient) PutUserCallCount() int {
+	fake.putUserMutex.RLock()
+	defer fake.putUserMutex.RUnlock()
+	return len(fake.putUserArgsForCall)
+}
+
+func (fake *FakeAPIClient) PutUserCalls(stub func(string, rabbithole.UserSettings) (*http.Response, error)) {
+	fake.putUserMutex.Lock()
+	defer fake.putUserMutex.Unlock()
+	fake.PutUserStub = stub
+}
+
+func (fake *FakeAPIClient) PutUserArgsForCall(i int) (string, rabbithole.UserSettings) {
+	fake.putUserMutex.RLock()
+	defer fake.putUserMutex.RUnlock()
+	argsForCall := fake.putUserArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeAPIClient) PutUserReturns(result1 *http.Response, result2 error) {
+	fake.putUserMutex.Lock()
+	defer fake.putUserMutex.Unlock()
+	fake.PutUserStub = nil
+	fake.putUserReturns = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeAPIClient) PutUserReturnsOnCall(i int, result1 *http.Response, result2 error) {
+	fake.putUserMutex.Lock()
+	defer fake.putUserMutex.Unlock()
+	fake.PutUserStub = nil
+	if fake.putUserReturnsOnCall == nil {
+		fake.putUserReturnsOnCall = make(map[int]struct {
+			result1 *http.Response
+			result2 error
+		})
+	}
+	fake.putUserReturnsOnCall[i] = struct {
+		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeAPIClient) PutVhost(arg1 string, arg2 rabbithole.VhostSettings) (*http.Response, error) {
 	fake.putVhostMutex.Lock()
 	ret, specificReturn := fake.putVhostReturnsOnCall[len(fake.putVhostArgsForCall)]
@@ -413,6 +491,8 @@ func (fake *FakeAPIClient) Invocations() map[string][][]interface{} {
 	defer fake.getVhostMutex.RUnlock()
 	fake.putPolicyMutex.RLock()
 	defer fake.putPolicyMutex.RUnlock()
+	fake.putUserMutex.RLock()
+	defer fake.putUserMutex.RUnlock()
 	fake.putVhostMutex.RLock()
 	defer fake.putVhostMutex.RUnlock()
 	fake.updatePermissionsInMutex.RLock()

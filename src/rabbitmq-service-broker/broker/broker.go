@@ -20,6 +20,7 @@ type APIClient interface {
 	UpdatePermissionsIn(vhost, username string, permissions rabbithole.Permissions) (res *http.Response, err error)
 	PutPolicy(vhost, name string, policy rabbithole.Policy) (res *http.Response, err error)
 	DeleteVhost(vhostname string) (res *http.Response, err error)
+	PutUser(string, rabbithole.UserSettings) (*http.Response, error)
 }
 
 type RabbitMQServiceBroker struct {
@@ -46,10 +47,6 @@ func (b RabbitMQServiceBroker) Update(ctx context.Context, instanceID string, de
 
 func (b RabbitMQServiceBroker) LastOperation(ctx context.Context, instanceID string, details brokerapi.PollDetails) (brokerapi.LastOperation, error) {
 	return brokerapi.LastOperation{}, errors.New("Not implemented")
-}
-
-func (b RabbitMQServiceBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
-	return brokerapi.Binding{}, errors.New("Not implemented")
 }
 
 func (b RabbitMQServiceBroker) Unbind(ctx context.Context, instanceID, bindingID string, details brokerapi.UnbindDetails, asyncAllowed bool) (brokerapi.UnbindSpec, error) {
