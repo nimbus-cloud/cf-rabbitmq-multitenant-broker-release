@@ -5,7 +5,6 @@ require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	dmitri.shuralyov.com/app/changes v0.0.0-20181114035150-5af16e21babb // indirect
 	dmitri.shuralyov.com/service/change v0.0.0-20190301072032-c25fb47d71b3 // indirect
-	git.apache.org/thrift.git v0.12.0 // indirect
 	github.com/Shopify/sarama v1.21.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20190212144455-93d5ec2c7f76 // indirect
 	github.com/drewolson/testflight v1.0.0 // indirect
@@ -24,6 +23,7 @@ require (
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.8.1 // indirect
+	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
@@ -33,10 +33,10 @@ require (
 	github.com/onsi/gomega v1.4.3
 	github.com/openzipkin/zipkin-go v0.1.5 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/pivotal-cf/brokerapi v4.2.1+incompatible
+	github.com/pivotal-cf/brokerapi v4.2.2+incompatible
+	github.com/pivotal-cf/rabbitmq-on-demand-adapter v0.5.0 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 // indirect
-	github.com/prometheus/common v0.2.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190227231451-bbced9601137 // indirect
 	github.com/rogpeppe/fastuuid v1.0.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
@@ -57,18 +57,18 @@ require (
 	github.com/sirupsen/logrus v1.3.0 // indirect
 	github.com/streadway/amqp v0.0.0-20190225234609-30f8ed68076e // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
-	go.opencensus.io v0.19.0 // indirect
+	go.opencensus.io v0.19.1 // indirect
 	go4.org v0.0.0-20190218023631-ce4c26f7be8e // indirect
-	golang.org/x/build v0.0.0-20190301201919-f7b27185a0a4 // indirect
+	golang.org/x/build v0.0.0-20190306163524-366373d7094b // indirect
 	golang.org/x/crypto v0.0.0-20190228161510-8dd112bcdc25 // indirect
-	golang.org/x/exp v0.0.0-20190301171323-01c40f57f5f6 // indirect
+	golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8 // indirect
 	golang.org/x/lint v0.0.0-20190301231843-5614ed5bae6f // indirect
 	golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95 // indirect
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421 // indirect
-	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
-	golang.org/x/sys v0.0.0-20190303192550-c2f5717e611c // indirect
-	golang.org/x/tools v0.0.0-20190228203856-589c23e65e65 // indirect
-	google.golang.org/genproto v0.0.0-20190227213309-4f5b463f9597 // indirect
+	golang.org/x/perf v0.0.0-20190306144031-151b6387e3f2 // indirect
+	golang.org/x/sys v0.0.0-20190306155319-3e9a981b8ddb // indirect
+	golang.org/x/tools v0.0.0-20190306162903-69e0dcfa1121 // indirect
+	google.golang.org/genproto v0.0.0-20190305195749-c21a8b77f9f0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.27.0
 	gopkg.in/yaml.v2 v2.2.2
