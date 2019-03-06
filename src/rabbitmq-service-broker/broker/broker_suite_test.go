@@ -32,6 +32,12 @@ func defaultConfig() config.Config {
 	}
 }
 
+func defaultConfigWithUserTags() config.Config {
+	cfg := defaultConfig()
+	cfg.RabbitMQ.RegularUserTags = "administrator"
+	return cfg
+}
+
 func defaultServiceBroker(conf config.Config, client *fakes.FakeAPIClient) brokerapi.ServiceBroker {
 	return broker.New(conf, client, lagertest.NewTestLogger("test"))
 }

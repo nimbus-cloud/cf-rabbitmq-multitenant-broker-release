@@ -47,6 +47,7 @@ type RabbitMQ struct {
 	Management        ManagementCredentials `yaml:"management"`
 	ManagementDomain  string                `yaml:"management_domain" validate:"required"`
 	OperatorSetPolicy RabbitMQPolicy        `yaml:"operator_set_policy"`
+	RegularUserTags   string                `yaml:"regular_user_tags"`
 }
 
 type ManagementCredentials struct {

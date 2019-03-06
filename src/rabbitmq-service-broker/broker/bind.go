@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"net/http"
 
 	rabbithole "github.com/michaelklishin/rabbit-hole"
 
@@ -12,15 +11,26 @@ import (
 )
 
 func (b RabbitMQServiceBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
-	response, err := b.client.PutUser(bindingID, rabbithole.UserSettings{
+	tags := b.cfg.RabbitMQ.RegularUserTags
+	if tags == "" {
+		tags = "policymaker,management"
+	}
+
+	userSettings := rabbithole.UserSettings{
 		Password: generateString(24),
-	})
+		Tags:     tags,
+	}
+	username := bindingID
+	err := b.createUser(username, userSettings)
 	if err != nil {
 		return brokerapi.Binding{}, err
 	}
-	if response != nil && response.StatusCode == http.StatusNoContent {
-		return brokerapi.Binding{}, brokerapi.ErrBindingAlreadyExists
+
+	err = b.assignPermissionsToUser(instanceID, bindingID)
+	if err != nil {
+		return brokerapi.Binding{}, err
 	}
+
 	return brokerapi.Binding{}, nil
 }
 

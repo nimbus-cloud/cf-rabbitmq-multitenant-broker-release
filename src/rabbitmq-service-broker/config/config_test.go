@@ -47,6 +47,7 @@ var _ = Describe("Config", func() {
 				Shareable:           true,
 			},
 			RabbitMQ: RabbitMQ{
+				RegularUserTags:  "policymaker,management",
 				Hosts:            []string{"127.0.0.1", "127.0.0.2"},
 				Administrator:    AdminCredentials{"fake-rmq-user", "fake-rmq-password"},
 				Management:       ManagementCredentials{"management-username"},

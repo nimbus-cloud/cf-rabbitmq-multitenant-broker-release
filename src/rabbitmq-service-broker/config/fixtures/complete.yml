@@ -14,6 +14,7 @@ service:
   icon_image: image_icon_base64
   shareable: true
 rabbitmq:
+  regular_user_tags: "policymaker,management"
   management_domain: pivotal-rabbitmq.127.0.0.1
   hosts:
     - 127.0.0.1
