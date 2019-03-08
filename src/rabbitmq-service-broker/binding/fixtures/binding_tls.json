@@ -1,0 +1,16 @@
+{
+ "dashboard_url": "https://pivotal-rabbitmq.sys.philippinebrown.cf-app.com/#/login/b2a5de47-796b-414d-bab4-eb299c268653/cfrnvvjtr6t803ilrdhgbe8mn7",
+ "hostname": "10.0.4.100",
+ "hostnames": [
+  "10.0.4.100",
+  "10.0.4.101"
+ ],
+ "http_api_uri": "https://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@pivotal-rabbitmq.sys.philippinebrown.cf-app.com/api/",
+ "http_api_uris": [
+  "https://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@pivotal-rabbitmq.sys.philippinebrown.cf-app.com/api/"
+ ],
+ "password": "cfrnvvjtr6t803ilrdhgbe8mn7",
+ "ssl": true,
+ "uri": "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100/6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+}
+

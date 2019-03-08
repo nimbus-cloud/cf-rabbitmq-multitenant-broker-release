@@ -11,6 +11,14 @@ import (
 )
 
 func (b RabbitMQServiceBroker) Bind(ctx context.Context, instanceID, bindingID string, details brokerapi.BindDetails, asyncAllowed bool) (brokerapi.Binding, error) {
+	exists, err := b.vhostExists(instanceID)
+	if err != nil {
+		return brokerapi.Binding{}, err
+	}
+	if !exists {
+		return brokerapi.Binding{}, brokerapi.ErrInstanceDoesNotExist
+	}
+
 	tags := b.cfg.RabbitMQ.RegularUserTags
 	if tags == "" {
 		tags = "policymaker,management"
@@ -21,7 +29,7 @@ func (b RabbitMQServiceBroker) Bind(ctx context.Context, instanceID, bindingID s
 		Tags:     tags,
 	}
 	username := bindingID
-	err := b.createUser(username, userSettings)
+	err = b.createUser(username, userSettings)
 	if err != nil {
 		return brokerapi.Binding{}, err
 	}

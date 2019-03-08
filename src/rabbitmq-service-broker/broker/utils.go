@@ -9,6 +9,20 @@ import (
 	"github.com/pivotal-cf/brokerapi"
 )
 
+func (b *RabbitMQServiceBroker) vhostExists(vhost string) (bool, error) {
+	logger := b.logger.Session("vhost-exists")
+	logger.Info("get-vhost")
+	if _, err := b.client.GetVhost(vhost); err != nil {
+		if rabbitErr, ok := err.(rabbithole.ErrorResponse); ok && rabbitErr.StatusCode == http.StatusNotFound {
+			logger.Info("vhost-not-found")
+			return false, nil
+		}
+		logger.Info("get-vhost-failed")
+		return false, err
+	}
+	return true, nil
+}
+
 func (b *RabbitMQServiceBroker) createVhost(vhost string) error {
 	logger := b.logger.Session("create-vhost")
 	logger.Info("get-vhost")
