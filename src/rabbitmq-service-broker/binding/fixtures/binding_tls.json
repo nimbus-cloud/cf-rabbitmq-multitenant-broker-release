@@ -10,7 +10,49 @@
   "https://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@pivotal-rabbitmq.sys.philippinebrown.cf-app.com/api/"
  ],
  "password": "cfrnvvjtr6t803ilrdhgbe8mn7",
+ "protocols": {
+  "amqp+ssl": {
+   "host": "10.0.4.100",
+   "hosts": [
+    "10.0.4.100",
+    "10.0.4.101"
+   ],
+   "password": "cfrnvvjtr6t803ilrdhgbe8mn7",
+   "port": 5671,
+   "ssl": true,
+   "uri": "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100:5671/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+   "uris": [
+    "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100:5671/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+    "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.101:5671/6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+   ],
+   "username": "b2a5de47-796b-414d-bab4-eb299c268653",
+   "vhost": "6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+  },
+  "management": {
+   "host": "10.0.4.100",
+   "hosts": [
+    "10.0.4.100",
+    "10.0.4.101"
+   ],
+   "password": "cfrnvvjtr6t803ilrdhgbe8mn7",
+   "port": 15672,
+   "ssl": false,
+   "uri": "http://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100:15672/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+   "uris": [
+    "http://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100:15672/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+    "http://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.101:15672/6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+   ],
+   "username": "b2a5de47-796b-414d-bab4-eb299c268653",
+   "vhost": "6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+  }
+ },
  "ssl": true,
- "uri": "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100/6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+ "uri": "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+ "uris": [
+  "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.100/6418d19f-e9e8-4c8b-9c92-5087c89cbc46",
+  "amqps://b2a5de47-796b-414d-bab4-eb299c268653:cfrnvvjtr6t803ilrdhgbe8mn7@10.0.4.101/6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
+ ],
+ "username": "b2a5de47-796b-414d-bab4-eb299c268653",
+ "vhost": "6418d19f-e9e8-4c8b-9c92-5087c89cbc46"
 }
 
