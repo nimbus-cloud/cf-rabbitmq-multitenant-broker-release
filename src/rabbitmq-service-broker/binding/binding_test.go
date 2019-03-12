@@ -34,7 +34,7 @@ var _ = Describe("Binding", func() {
 		Expect(string(creds)).To(MatchJSON(expected))
 	})
 
-	FIt("generates the right binding with TLS disabled", func() {
+	It("generates the right binding with TLS disabled", func() {
 		b := binding.Builder{
 			MgmtDomain:    "pivotal-rabbitmq.sys.philippinebrown.cf-app.com",
 			Hostnames:     []string{"10.0.4.100", "10.0.4.101"},

@@ -36,6 +36,18 @@ type FakeAPIClient struct {
 		result1 *rabbithole.VhostInfo
 		result2 error
 	}
+	ProtocolPortsStub        func() (map[string]rabbithole.Port, error)
+	protocolPortsMutex       sync.RWMutex
+	protocolPortsArgsForCall []struct {
+	}
+	protocolPortsReturns struct {
+		result1 map[string]rabbithole.Port
+		result2 error
+	}
+	protocolPortsReturnsOnCall map[int]struct {
+		result1 map[string]rabbithole.Port
+		result2 error
+	}
 	PutPolicyStub        func(string, string, rabbithole.Policy) (*http.Response, error)
 	putPolicyMutex       sync.RWMutex
 	putPolicyArgsForCall []struct {
@@ -220,6 +232,61 @@ func (fake *FakeAPIClient) GetVhostReturnsOnCall(i int, result1 *rabbithole.Vhos
 	}
 	fake.getVhostReturnsOnCall[i] = struct {
 		result1 *rabbithole.VhostInfo
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeAPIClient) ProtocolPorts() (map[string]rabbithole.Port, error) {
+	fake.protocolPortsMutex.Lock()
+	ret, specificReturn := fake.protocolPortsReturnsOnCall[len(fake.protocolPortsArgsForCall)]
+	fake.protocolPortsArgsForCall = append(fake.protocolPortsArgsForCall, struct {
+	}{})
+	fake.recordInvocation("ProtocolPorts", []interface{}{})
+	fake.protocolPortsMutex.Unlock()
+	if fake.ProtocolPortsStub != nil {
+		return fake.ProtocolPortsStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.protocolPortsReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeAPIClient) ProtocolPortsCallCount() int {
+	fake.protocolPortsMutex.RLock()
+	defer fake.protocolPortsMutex.RUnlock()
+	return len(fake.protocolPortsArgsForCall)
+}
+
+func (fake *FakeAPIClient) ProtocolPortsCalls(stub func() (map[string]rabbithole.Port, error)) {
+	fake.protocolPortsMutex.Lock()
+	defer fake.protocolPortsMutex.Unlock()
+	fake.ProtocolPortsStub = stub
+}
+
+func (fake *FakeAPIClient) ProtocolPortsReturns(result1 map[string]rabbithole.Port, result2 error) {
+	fake.protocolPortsMutex.Lock()
+	defer fake.protocolPortsMutex.Unlock()
+	fake.ProtocolPortsStub = nil
+	fake.protocolPortsReturns = struct {
+		result1 map[string]rabbithole.Port
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeAPIClient) ProtocolPortsReturnsOnCall(i int, result1 map[string]rabbithole.Port, result2 error) {
+	fake.protocolPortsMutex.Lock()
+	defer fake.protocolPortsMutex.Unlock()
+	fake.ProtocolPortsStub = nil
+	if fake.protocolPortsReturnsOnCall == nil {
+		fake.protocolPortsReturnsOnCall = make(map[int]struct {
+			result1 map[string]rabbithole.Port
+			result2 error
+		})
+	}
+	fake.protocolPortsReturnsOnCall[i] = struct {
+		result1 map[string]rabbithole.Port
 		result2 error
 	}{result1, result2}
 }
@@ -489,6 +556,8 @@ func (fake *FakeAPIClient) Invocations() map[string][][]interface{} {
 	defer fake.deleteVhostMutex.RUnlock()
 	fake.getVhostMutex.RLock()
 	defer fake.getVhostMutex.RUnlock()
+	fake.protocolPortsMutex.RLock()
+	defer fake.protocolPortsMutex.RUnlock()
 	fake.putPolicyMutex.RLock()
 	defer fake.putPolicyMutex.RUnlock()
 	fake.putUserMutex.RLock()

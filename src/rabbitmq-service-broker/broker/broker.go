@@ -21,6 +21,7 @@ type APIClient interface {
 	PutPolicy(vhost, name string, policy rabbithole.Policy) (res *http.Response, err error)
 	DeleteVhost(vhostname string) (res *http.Response, err error)
 	PutUser(string, rabbithole.UserSettings) (*http.Response, error)
+	ProtocolPorts() (res map[string]rabbithole.Port, err error)
 }
 
 type RabbitMQServiceBroker struct {

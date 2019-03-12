@@ -43,6 +43,39 @@
     "http://ce294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.101:15672/api/"
    ],
    "username": "ce294862-03cc-4f4e-a6a8-69cb36e4f96e"
+  },
+  "mqtt": {
+   "host": "10.0.4.100",
+   "hosts": [
+    "10.0.4.100",
+    "10.0.4.101"
+   ],
+   "password": "2143rkcobrqhdej1ke5ds5p8u6",
+   "port": 1883,
+   "ssl": false,
+   "uri": "mqtt://564da46b-e087-479f-ab63-5cf2aae0d098%3Ace294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.100:1883",
+   "uris": [
+    "mqtt://564da46b-e087-479f-ab63-5cf2aae0d098%3Ace294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.100:1883",
+    "mqtt://564da46b-e087-479f-ab63-5cf2aae0d098%3Ace294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.101:1883"
+   ],
+   "username": "564da46b-e087-479f-ab63-5cf2aae0d098:ce294862-03cc-4f4e-a6a8-69cb36e4f96e"
+  },
+  "stomp": {
+   "host": "10.0.4.100",
+   "hosts": [
+    "10.0.4.100",
+    "10.0.4.101"
+   ],
+   "password": "2143rkcobrqhdej1ke5ds5p8u6",
+   "port": 61613,
+   "ssl": false,
+   "uri": "stomp://ce294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.100:61613",
+   "uris": [
+    "stomp://ce294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.100:61613",
+    "stomp://ce294862-03cc-4f4e-a6a8-69cb36e4f96e:2143rkcobrqhdej1ke5ds5p8u6@10.0.4.101:61613"
+   ],
+   "username": "ce294862-03cc-4f4e-a6a8-69cb36e4f96e",
+   "vhost": "564da46b-e087-479f-ab63-5cf2aae0d098"
   }
  },
  "password": "2143rkcobrqhdej1ke5ds5p8u6",

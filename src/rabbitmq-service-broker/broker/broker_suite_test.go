@@ -28,6 +28,7 @@ func defaultConfig() config.Config {
 			Administrator: config.AdminCredentials{
 				Username: "default-admin-username",
 			},
+			Hosts: []string{"fake-hostname-1", "fake-hostname-2"},
 		},
 	}
 }

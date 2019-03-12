@@ -2,9 +2,8 @@ package broker_test
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"fmt"
 	"net/http"
 
 	. "github.com/onsi/ginkgo"
@@ -100,18 +99,52 @@ var _ = Describe("Binding a RMQ service instance", func() {
 		})
 
 		Describe("the binding data", func() {
-			It("generates the right binding with TLS enabled", func() {
-				binding, err := broker.Bind(ctx, "my-service-instance-id", "binding-id", brokerapi.BindDetails{}, false)
-				Expect(err).NotTo(HaveOccurred())
+			When("it cannot read the protocol ports", func() {
+				BeforeEach(func() {
+					rabbitClient.ProtocolPortsReturns(nil, fmt.Errorf("failed to read protocol ports"))
+				})
 
-				creds, err := json.Marshal(binding.Credentials)
-				Expect(err).NotTo(HaveOccurred())
+				It("fails with an error", func() {
+					_, err := broker.Bind(ctx, "my-service-instance-id", "binding-id", brokerapi.BindDetails{}, false)
+					Expect(err).To(MatchError("failed to read protocol ports"))
+				})
+			})
 
-				expected, err := ioutil.ReadFile("fixtures/binding_tls.json")
-				Expect(err).NotTo(HaveOccurred())
+			When("it reads the protocol ports", func() {
+				BeforeEach(func() {
+					rabbitClient.ProtocolPortsReturns(fakeProtocolPorts(), nil)
+				})
 
-				Expect(string(creds)).To(MatchJSON(expected))
+				It("generates the right binding", func() {
+					binding, err := broker.Bind(ctx, "my-service-instance-id", "binding-id", brokerapi.BindDetails{}, false)
+					Expect(err).NotTo(HaveOccurred())
+
+					Expect(binding.Credentials).To(HaveKeyWithValue("username", "binding-id"))
+					Expect(binding.Credentials).To(HaveKeyWithValue("vhost", "my-service-instance-id"))
+					Expect(binding.Credentials).To(HaveKeyWithValue("hostname", "fake-hostname-1"))
+					Expect(binding.Credentials).To(HaveKeyWithValue("hostnames", ConsistOf("fake-hostname-1", "fake-hostname-2")))
+					Expect(binding.Credentials).To(HaveKeyWithValue("protocols", SatisfyAll(
+						HaveKey("amqp+ssl"),
+						HaveKey("mqtt"),
+						HaveKey("mqtt+ssl"),
+						HaveKey("stomp"),
+						HaveKey("stomp+ssl"),
+						HaveKey("management"),
+					)))
+				})
 			})
 		})
 	})
 })
+
+func fakeProtocolPorts() map[string]rabbithole.Port {
+	return map[string]rabbithole.Port{
+		"amqp/ssl":   5671,
+		"clustering": 25672,
+		"http":       15672,
+		"mqtt":       1883,
+		"mqtt/ssl":   8883,
+		"stomp":      61613,
+		"stomp/ssl":  61614,
+	}
+}
