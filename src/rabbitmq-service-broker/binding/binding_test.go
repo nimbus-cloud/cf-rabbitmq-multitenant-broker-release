@@ -60,11 +60,13 @@ var _ = Describe("Binding", func() {
 
 func fakeNonTLSProtocolPorts() map[string]int {
 	return map[string]int{
-		"amqp":       5672,
-		"clustering": 25672,
-		"http":       15672,
-		"mqtt":       1883,
-		"stomp":      61613,
+		"amqp":           5672,
+		"clustering":     25672,
+		"http":           15672,
+		"mqtt":           1883,
+		"stomp":          61613,
+		"http/web-stomp": 15674,
+		"http/web-mqtt":  15675,
 	}
 }
 
