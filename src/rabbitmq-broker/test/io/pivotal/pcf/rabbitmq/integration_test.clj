@@ -234,12 +234,14 @@
 (deftest test-unbind-service
   (testing "with provided service id and binding id that ARE valid"
     (let [sid (.toLowerCase ^String (str (UUID/randomUUID)))
-          bid (.toLowerCase ^String (str (UUID/randomUUID)))]
+          bid (.toLowerCase ^String (str (UUID/randomUUID)))
+          si "00000000-0000-0000-0000-000000000000"
+          pi "11111111-1111-1111-1111-111111111111"]
       (with-server-running
         (provided-vhost-exists sid
                                (provided-user-exists bid
                                                      (let [n                     (count (rs/list-users))
-                                                           {:keys [status body]} (th/raw-delete (format "v2/service_instances/%s/service_bindings/%s" sid bid))
+                                                           {:keys [status body]} (th/raw-delete (format "v2/service_instances/%s/service_bindings/%s?service_id=%s&plan_id=%s" sid bid si pi))
                                                            res                   (json/decode body true)
                                                            n'                    (count (rs/list-users))]
                                                        (is (= 200 status))
@@ -252,7 +254,7 @@
         (provided-vhost-exists sid
                                (let [{:keys [status body]} (th/raw-delete (format "v2/service_instances/%s/service_bindings/" sid))
                                      n'                    (count (rs/list-users))]
-                                 (is (= 404 status))
+                                 (is (= 410 status))
                                  (is (= n n'))))))))
 
 (deftest test-ops-config

@@ -77,6 +77,10 @@ var _ = Describe("the lifecycle of a service instance", func() {
 		Expect(perms.Write).To(Equal(".*"))
 		Expect(perms.Read).To(Equal(".*"))
 
+		By("sending an unbind request")
+		unbindResponse, unbindBody := doRequest(http.MethodDelete, unbindURL(serviceInstanceID, bindingID, serviceID, planID), nil)
+		Expect(unbindResponse.StatusCode).To(Equal(http.StatusOK), string(unbindBody))
+
 		By("sending a deprovision request")
 		deprovisionResponse, deprovisionBody := doRequest(http.MethodDelete, deprovisionURL(serviceInstanceID, serviceID, planID), nil)
 		Expect(deprovisionResponse.StatusCode).To(Equal(http.StatusOK), string(deprovisionBody))
@@ -164,6 +168,16 @@ var _ = Describe("the lifecycle of a service instance", func() {
 			})
 		})
 	})
+
+	Context("unbinding", func() {
+		When("a binding doesn't exist", func() {
+			It("fails with HTTP 410", func() {
+				serviceInstanceID := "does-not-exist"
+				response, body := doRequest(http.MethodDelete, unbindURL(bindingID, serviceInstanceID, serviceID, planID), nil)
+				Expect(response.StatusCode).To(Equal(http.StatusGone), string(body))
+			})
+		})
+	})
 })
 
 func provisionURL(serviceInstanceID string) string {
@@ -176,6 +190,10 @@ func deprovisionURL(serviceInstanceID, serviceID, planID string) string {
 
 func bindURL(serviceInstanceID, bindingID string) string {
 	return fmt.Sprintf("%sservice_instances/%s/service_bindings/%s", baseURL, serviceInstanceID, bindingID)
+}
+
+func unbindURL(serviceInstanceID, bindingID, serviceID, planID string) string {
+	return fmt.Sprintf("%s?service_id=%s&plan_id=%s", bindURL(serviceInstanceID, bindingID), serviceID, planID)
 }
 
 func provision(serviceInstanceID, serviceID, planID string) (*http.Response, []byte) {

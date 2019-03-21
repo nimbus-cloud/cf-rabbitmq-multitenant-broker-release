@@ -29,7 +29,7 @@ type RabbitHutch interface {
 	CreateUser(string, string, string) (string, error)
 	ProtocolPorts() (map[string]int, error)
 	DeleteUser(string) error
-	CloseConnections(string) (*http.Response, error)
+	Unbind(string) error
 }
 
 type rabbitHutch struct {
